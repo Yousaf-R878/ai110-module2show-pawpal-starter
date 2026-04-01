@@ -18,46 +18,44 @@ My initial UML design consists of Owner, Pet, Scheduler, and Task classes.
     - An owner also has a scheduler, which can create a new schedule for the owner. 
     - Many tasks can be associated to many pets
 
-    Owner
-    - String OwnerName
-    - List<Pet> Pets
-    - List<Tasks> Schedule
-    - Scheduler TaskScheduler
-    --
-    addTask()
-    removeTask()
-    addPet()
-    removePet()
-    runScheduler()
+**Owner**
 
-    -------------------
-    Pet
-    - String PetName
-    - String PetBreed
-    - String PetGender
-    - Int PetAge
-    --
-    setPetName()
-    setPetBreed()
-    setPetGender()
-    setPetAge()
+| Fields | Methods |
+|---|---|
+| String OwnerName | addTask() |
+| List\<Pet\> Pets | removeTask() |
+| List\<Task\> Schedule | addPet() |
+| Scheduler TaskScheduler | removePet() |
+| | runScheduler() |
 
-    Task
-    - Pet TaskedPet
-    - String TaskName
-    - String TaskType
-    - Float StartTime
-    - Float EndTime
-    - Int TaskPriority
-    ------------------
+**Pet**
 
-    Scheduler:
-    - List<Pet> OwnersPets
-    - List<Task> OwnerSchedule
-    - List<Task> NewSchedule
-    - String ScheduleReasoning
-    --
-    generateNewSchedule()
+| Fields | Methods |
+|---|---|
+| String PetName | setPetName() |
+| String PetBreed | setPetBreed() |
+| String PetGender | setPetGender() |
+| Int PetAge | setPetAge() |
+
+**Task**
+
+| Fields | Methods |
+|---|---|
+| Pet TaskedPet | *(none)* |
+| String TaskName | |
+| String TaskType | |
+| Float StartTime | |
+| Float EndTime | |
+| Int TaskPriority | |
+
+**Scheduler**
+
+| Fields | Methods |
+|---|---|
+| List\<Pet\> OwnersPets | generateNewSchedule() |
+| List\<Task\> OwnerSchedule | |
+| List\<Task\> NewSchedule | |
+| String ScheduleReasoning | |
 
 Here was my initial UML diagram before asking AI to create it within the Mermaid Live Editor.
     
