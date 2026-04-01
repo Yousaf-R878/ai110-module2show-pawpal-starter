@@ -23,20 +23,20 @@ My initial UML design consists of Owner, Pet, Scheduler, and Task classes.
     - List<Pet> Pets
     - List<Tasks> Schedule
     - Scheduler TaskScheduler
-    ------------------
+    --
     addTask()
     removeTask()
     addPet()
     removePet()
     runScheduler()
 
-
+    -------------------
     Pet
     - String PetName
     - String PetBreed
     - String PetGender
     - Int PetAge
-    ------------------
+    --
     setPetName()
     setPetBreed()
     setPetGender()
@@ -56,7 +56,7 @@ My initial UML design consists of Owner, Pet, Scheduler, and Task classes.
     - List<Task> OwnerSchedule
     - List<Task> NewSchedule
     - String ScheduleReasoning
-    ------------------
+    --
     generateNewSchedule()
 
 Here was my initial UML diagram before asking AI to create it within the Mermaid Live Editor.
@@ -143,6 +143,7 @@ The constaint that made sense to matter the most was the priority of a task, and
 
 - What part of this project are you most satisfied with?
 Im most satisfied with taking UML diagrams and building out the architecture of a project before actually jumping into actually developing and working with code. It reinforces the idea of really understanding the underlying architecture that way when you move to developing, you have an easier time with guiding the agent.
+I did like using different chat sessions for different tasks as it helped me stay more organized with knowing what agent focuses on what task. It also allowed me to have multiple agents run simultaneously which is something I felt as though I rarely used.
 
 **b. What you would improve**
 
