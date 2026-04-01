@@ -17,7 +17,7 @@ My initial UML design consists of Owner, Pet, Scheduler, and Task classes.
     - A pet also has owner 
     - An owner also has a scheduler, which can create a new schedule for the owner. 
     - Many tasks can be associated to many pets
-    
+
     Owner
     - String OwnerName
     - List<Pet> Pets
@@ -42,8 +42,6 @@ My initial UML design consists of Owner, Pet, Scheduler, and Task classes.
     setPetGender()
     setPetAge()
 
-
-
     Task
     - Pet TaskedPet
     - String TaskName
@@ -61,8 +59,15 @@ My initial UML design consists of Owner, Pet, Scheduler, and Task classes.
     ------------------
     generateNewSchedule()
 
+Here was my initial UML diagram before asking AI to create it within the Mermaid Live Editor.
     
 - What classes did you include, and what responsibilities did you assign to each?
+
+I included the Owner, Pet, Task, and Scheduler classes. 
+Owner: Responsible for adding pets, and creating tasks for their schedule
+Pet: Responsible for containing relevant data information tied to a specific pet
+Scheduler: Responsible for taking the owners existing pets and schedule and then creates a new schedule without conflicts and provides reasoning for the changes.
+Task: Responsible for representing a single task or care activity, being tied to specific pet. It has start and end times as well as task priority fields to aid with scheduling.
 
 **b. Design changes**
 
