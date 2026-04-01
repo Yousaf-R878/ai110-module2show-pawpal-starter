@@ -117,4 +117,4 @@ The tests cover four core scheduling behaviors:
 
 ## 📸 Demo
 
-<a href="/course_images/ai110/PawPal.png" target="_blank"><img src='/course_images/ai110/PawPal.png' title='PawPal App' width='' alt='PawPal App' class='center-block' /></a>
+<a href="/ai110-module2show-pawpal-starter/images/PawPal.png" target="_blank"><img src='/course_images/ai110/PawPal.png' title='PawPal App' width='' alt='PawPal App' class='center-block' /></a>
