@@ -25,7 +25,7 @@ class Pet:
 
 @dataclass
 class Task:
-    tasked_pet: Pet
+    tasked_pets: List[Pet]
     task_name: str
     task_type: str
     start_time: float
@@ -35,8 +35,7 @@ class Task:
 
 @dataclass
 class Scheduler:
-    owners_pets: List[Pet] = field(default_factory=list)
-    owner_schedule: List[Task] = field(default_factory=list)
+    owner: Owner = None
     new_schedule: List[Task] = field(default_factory=list)
     schedule_reasoning: str = ""
 
