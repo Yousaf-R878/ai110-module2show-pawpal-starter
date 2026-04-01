@@ -4,7 +4,7 @@ from datetime import date, timedelta
 from typing import List
 
 
-@dataclass
+@dataclass(eq=False)
 class Task:
     tasked_pets: List[Pet]
     task_name: str
@@ -49,7 +49,7 @@ class Task:
         return self.end_time > self.start_time
 
 
-@dataclass
+@dataclass(eq=False)
 class Pet:
     pet_name: str
     pet_breed: str
