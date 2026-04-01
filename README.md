@@ -22,6 +22,27 @@ Your final app should:
 - Display the plan clearly (and ideally explain the reasoning)
 - Include tests for the most important scheduling behaviors
 
+## Smarter Scheduling
+
+The `Scheduler` class (in `pawpal_system.py`) has been extended with three new features:
+
+**Sort by time**
+`Scheduler.sort_by_time()` returns all tasks in chronological order using a lambda key:
+```python
+sorted(tasks, key=lambda t: t.start_time)
+```
+
+**Filter by status or pet**
+`Scheduler.filter_tasks(completed, pet_name)` filters tasks in a single pass. Both arguments are optional and compose together — for example, `filter_tasks(completed=False, pet_name="Buddy")` returns only Buddy's pending tasks.
+
+**Conflict detection**
+`Scheduler.detect_conflicts(tasks)` checks every pair of tasks for time overlap and returns warning strings without crashing. It distinguishes two cases:
+- *Same-pet conflict* — a pet is double-booked at the same time
+- *Cross-pet conflict* — two tasks for different pets overlap in time
+
+**Auto-recurrence**
+`Task.mark_complete()` now checks the task's `frequency` field. If it is `"daily"` or `"weekly"`, a new Task is automatically added to each assigned pet's list with the date advanced by `timedelta(days=1)` or `timedelta(weeks=1)`. Tasks with `frequency="once"` are simply marked done with no follow-up created.
+
 ## Getting started
 
 ### Setup

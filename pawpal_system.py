@@ -1,5 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
+from datetime import date, timedelta
 from typing import List
 
 
@@ -14,10 +15,30 @@ class Task:
     description: str = ""
     frequency: str = "once"
     is_completed: bool = False
+    task_date: date = field(default_factory=date.today)
 
     def mark_complete(self) -> None:
-        """Mark this task as completed."""
+        """Mark this task as completed and schedule next occurrence if recurring."""
         self.is_completed = True
+        if self.frequency == "daily":
+            delta = timedelta(days=1)
+        elif self.frequency == "weekly":
+            delta = timedelta(weeks=1)
+        else:
+            return
+        next_task = Task(
+            tasked_pets=self.tasked_pets,
+            task_name=self.task_name,
+            task_type=self.task_type,
+            start_time=self.start_time,
+            end_time=self.end_time,
+            task_priority=self.task_priority,
+            description=self.description,
+            frequency=self.frequency,
+            task_date=self.task_date + delta,
+        )
+        for pet in self.tasked_pets:
+            pet.add_task(next_task)
 
     def duration(self) -> float:
         """Return the length of the task in hours."""
@@ -78,24 +99,68 @@ class Scheduler:
 
         sorted_tasks = sorted(pending, key=lambda t: (-t.task_priority, t.start_time))
 
-        conflicts = []
-        for i, task in enumerate(sorted_tasks):
-            for other in sorted_tasks[:i]:
-                shared_pets = [p for p in task.tasked_pets if p in other.tasked_pets]
-                if shared_pets and task.start_time < other.end_time and other.start_time < task.end_time:
-                    conflicts.append((task.task_name, other.task_name))
-
         self.new_schedule = sorted_tasks
 
+        warnings = self.detect_conflicts(sorted_tasks)
         reasoning = (
             f"Scheduled {len(sorted_tasks)} pending task(s) sorted by priority "
             f"(highest first), then by start time."
         )
-        if conflicts:
-            conflict_str = ", ".join(f"'{a}' overlaps '{b}'" for a, b in conflicts)
-            reasoning += f" WARNING - time conflicts detected: {conflict_str}."
+        if warnings:
+            reasoning += " " + " ".join(warnings)
 
         self.schedule_reasoning = reasoning
+
+    def detect_conflicts(self, tasks: List[Task]) -> List[str]:
+        """Check all task pairs for time overlap and return a list of warning strings.
+
+        Detects both same-pet conflicts (a pet double-booked) and cross-pet
+        conflicts (two tasks overlapping in time regardless of which pet).
+        Returns warnings without raising exceptions.
+        """
+        warnings = []
+        for i, task in enumerate(tasks):
+            for other in tasks[:i]:
+                overlaps = task.start_time < other.end_time and other.start_time < task.end_time
+                if not overlaps:
+                    continue
+                shared_pets = [p for p in task.tasked_pets if p in other.tasked_pets]
+                if shared_pets:
+                    pet_names = ", ".join(p.pet_name for p in shared_pets)
+                    warnings.append(
+                        f"WARNING: '{task.task_name}' and '{other.task_name}' overlap "
+                        f"for the same pet(s): {pet_names}."
+                    )
+                else:
+                    task_pets = ", ".join(p.pet_name for p in task.tasked_pets)
+                    other_pets = ", ".join(p.pet_name for p in other.tasked_pets)
+                    warnings.append(
+                        f"WARNING: '{task.task_name}' ({task_pets}) and "
+                        f"'{other.task_name}' ({other_pets}) overlap in time."
+                    )
+        return warnings
+
+    def sort_by_time(self) -> List[Task]:
+        """Return all owner tasks sorted by start_time ascending."""
+        all_tasks = self.owner.get_all_tasks()
+        return sorted(all_tasks, key=lambda t: t.start_time)
+
+    def filter_tasks(self, completed: bool = None, pet_name: str = None) -> List[Task]:
+        """Filter tasks by completion status and/or pet name.
+
+        Args:
+            completed: If True, return only completed tasks.
+                       If False, return only pending tasks.
+                       If None, include all tasks regardless of status.
+            pet_name:  If provided, return only tasks assigned to a pet
+                       with this name. If None, include all pets.
+        """
+        tasks = self.owner.get_all_tasks()
+        if completed is not None:
+            tasks = [t for t in tasks if t.is_completed == completed]
+        if pet_name is not None:
+            tasks = [t for t in tasks if any(p.pet_name == pet_name for p in t.tasked_pets)]
+        return tasks
 
 
 @dataclass

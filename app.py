@@ -1,4 +1,6 @@
 import streamlit as st
+from pawpal_system import Owner, Pet, Task
+
 
 st.set_page_config(page_title="PawPal+", page_icon="🐾", layout="centered")
 
@@ -38,33 +40,73 @@ At minimum, your system should:
 
 st.divider()
 
-st.subheader("Quick Demo Inputs (UI only)")
+st.subheader("Owner")
 owner_name = st.text_input("Owner name", value="Jordan")
-pet_name = st.text_input("Pet name", value="Mochi")
-species = st.selectbox("Species", ["dog", "cat", "other"])
 
-st.markdown("### Tasks")
-st.caption("Add a few tasks. In your final version, these should feed into your scheduler.")
+if "owner" not in st.session_state:
+    st.session_state.owner = Owner(owner_name=owner_name)
 
-if "tasks" not in st.session_state:
-    st.session_state.tasks = []
+st.subheader("Add a Pet")
+pet_name   = st.text_input("Pet name", value="Mochi")
+pet_breed  = st.text_input("Breed", value="Unknown")
+pet_gender = st.selectbox("Gender", ["Male", "Female"])
+pet_age    = st.number_input("Age", min_value=0, max_value=30, value=1)
+
+if st.button("Add Pet"):
+    new_pet = Pet(pet_name=pet_name, pet_breed=pet_breed,
+                  pet_gender=pet_gender, pet_age=int(pet_age))
+    st.session_state.owner.add_pet(new_pet)
+    st.success(f"{pet_name} added!")
+
+if st.session_state.owner.pets:
+    st.write("Current pets:", [p.pet_name for p in st.session_state.owner.pets])
+
+st.subheader("Schedule a Task")
+st.caption("Tasks are assigned to all current pets of this owner.")
 
 col1, col2, col3 = st.columns(3)
 with col1:
-    task_title = st.text_input("Task title", value="Morning walk")
+    task_title = st.text_input("Task name", value="Morning walk")
 with col2:
-    duration = st.number_input("Duration (minutes)", min_value=1, max_value=240, value=20)
+    task_type = st.selectbox("Task type", ["Exercise", "Feeding", "Medication", "Appointment", "Other"])
 with col3:
-    priority = st.selectbox("Priority", ["low", "medium", "high"], index=2)
+    priority_map = {"Low": 1, "Medium": 2, "High": 3}
+    priority = st.selectbox("Priority", list(priority_map.keys()), index=2)
 
-if st.button("Add task"):
-    st.session_state.tasks.append(
-        {"title": task_title, "duration_minutes": int(duration), "priority": priority}
-    )
+col4, col5 = st.columns(2)
+with col4:
+    start_time = st.number_input("Start time (24h, e.g. 8.5 = 8:30)", min_value=0.0, max_value=23.99, value=8.0, step=0.25)
+with col5:
+    end_time = st.number_input("End time (24h)", min_value=0.0, max_value=23.99, value=8.5, step=0.25)
 
-if st.session_state.tasks:
+if st.button("Add Task"):
+    if not st.session_state.owner.pets:
+        st.error("Add at least one pet before scheduling a task.")
+    elif end_time <= start_time:
+        st.error("End time must be after start time.")
+    else:
+        new_task = Task(
+            tasked_pets=list(st.session_state.owner.pets),
+            task_name=task_title,
+            task_type=task_type,
+            start_time=start_time,
+            end_time=end_time,
+            task_priority=priority_map[priority]
+        )
+        st.session_state.owner.add_task(new_task)
+        st.success(f"'{task_title}' added!")
+
+all_tasks = st.session_state.owner.get_all_tasks()
+if all_tasks:
     st.write("Current tasks:")
-    st.table(st.session_state.tasks)
+    st.table([{
+        "Task": t.task_name,
+        "Type": t.task_type,
+        "Start": t.start_time,
+        "End": t.end_time,
+        "Priority": t.task_priority,
+        "Done": t.is_completed
+    } for t in all_tasks])
 else:
     st.info("No tasks yet. Add one above.")
 
