@@ -1,10 +1,67 @@
 # PawPal+ Project Reflection
 
+3 Core Actions:
+- A User shall be able to see all their different tasks categorized
+- A user shall be able to add and remove tasks 
+- A user shall be able to see why the assistant made the plan it made
+
 ## 1. System Design
 
 **a. Initial design**
 
 - Briefly describe your initial UML design.
+My initial UML design consists of Owner, Pet, Scheduler, and Task classes. 
+    - An owner has pets and can have many pets
+    - An owner has tasks which make up its schedule 
+    - Many tasks can belong to a single owner
+    - A pet also has owner 
+    - An owner also has a scheduler, which can create a new schedule for the owner. 
+    - Many tasks can be associated to many pets
+    
+    Owner
+    - String OwnerName
+    - List<Pet> Pets
+    - List<Tasks> Schedule
+    - Scheduler TaskScheduler
+    ------------------
+    addTask()
+    removeTask()
+    addPet()
+    removePet()
+    runScheduler()
+
+
+    Pet
+    - String PetName
+    - String PetBreed
+    - String PetGender
+    - Int PetAge
+    ------------------
+    setPetName()
+    setPetBreed()
+    setPetGender()
+    setPetAge()
+
+
+
+    Task
+    - Pet TaskedPet
+    - String TaskName
+    - String TaskType
+    - Float StartTime
+    - Float EndTime
+    - Int TaskPriority
+    ------------------
+
+    Scheduler:
+    - List<Pet> OwnersPets
+    - List<Task> OwnerSchedule
+    - List<Task> NewSchedule
+    - String ScheduleReasoning
+    ------------------
+    generateNewSchedule()
+
+    
 - What classes did you include, and what responsibilities did you assign to each?
 
 **b. Design changes**
